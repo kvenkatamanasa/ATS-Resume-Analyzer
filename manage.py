@@ -7,7 +7,7 @@ import sys
 def main():
     os.environ.setdefault(
         "DJANGO_SETTINGS_MODULE",
-        "ats_resume_analyzer.settings"
+        "ats_analyzer.settings"
     )
 
     try:

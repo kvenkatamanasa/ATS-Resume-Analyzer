@@ -2,10 +2,18 @@ from pathlib import Path
 import os
 import dj_database_url
 
+
+# =========================================================
+# BASE DIRECTORY
+# =========================================================
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# =========================================================
 # SECURITY
+# =========================================================
+
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
     "django-insecure-change-this-in-production"
@@ -14,7 +22,10 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 
+# =========================================================
 # ALLOWED HOSTS
+# =========================================================
+
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
@@ -22,7 +33,10 @@ ALLOWED_HOSTS = [
 ]
 
 
+# =========================================================
 # APPLICATIONS
+# =========================================================
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -35,10 +49,16 @@ INSTALLED_APPS = [
 ]
 
 
+# =========================================================
 # MIDDLEWARE
+# =========================================================
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
+    # WhiteNoise for serving static files
     "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -48,16 +68,27 @@ MIDDLEWARE = [
 ]
 
 
-# URLS
+# =========================================================
+# URL CONFIGURATION
+# =========================================================
+
 ROOT_URLCONF = "ats_analyzer.urls"
 
 
+# =========================================================
 # TEMPLATES
+# =========================================================
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
+
         "APP_DIRS": True,
+
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
@@ -69,11 +100,17 @@ TEMPLATES = [
 ]
 
 
+# =========================================================
 # WSGI
+# =========================================================
+
 WSGI_APPLICATION = "ats_analyzer.wsgi.application"
 
 
+# =========================================================
 # DATABASE
+# =========================================================
+
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
@@ -93,32 +130,57 @@ else:
     }
 
 
+# =========================================================
 # PASSWORD VALIDATION
+# =========================================================
+
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "MinimumLengthValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "CommonPasswordValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "NumericPasswordValidator"
+        ),
     },
 ]
 
 
+# =========================================================
 # INTERNATIONALIZATION
+# =========================================================
+
 LANGUAGE_CODE = "en-us"
+
 TIME_ZONE = "Asia/Kolkata"
+
 USE_I18N = True
+
 USE_TZ = True
 
 
+# =========================================================
 # STATIC FILES
+# =========================================================
+
 STATIC_URL = "/static/"
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_DIRS = [
@@ -126,37 +188,75 @@ STATICFILES_DIRS = [
 ]
 
 
+# =========================================================
 # WHITENOISE
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# =========================================================
+
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
 
 
-# MEDIA
+# =========================================================
+# MEDIA FILES
+# =========================================================
+
 MEDIA_URL = "/media/"
+
 MEDIA_ROOT = BASE_DIR / "media"
 
 
+# =========================================================
 # DEFAULT PRIMARY KEY
+# =========================================================
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# LOGIN
+# =========================================================
+# LOGIN / LOGOUT
+# =========================================================
+
 LOGIN_URL = "/accounts/login/"
+
 LOGIN_REDIRECT_URL = "/"
+
 LOGOUT_REDIRECT_URL = "/"
 
 
+# =========================================================
 # CSRF
+# =========================================================
+
 CSRF_TRUSTED_ORIGINS = [
     "https://*.vercel.app",
 ]
 
 
+# =========================================================
 # PRODUCTION SECURITY
+# =========================================================
+
 if not DEBUG:
+
     SECURE_PROXY_SSL_HEADER = (
         "HTTP_X_FORWARDED_PROTO",
         "https",
     )
 
     SESSION_COOKIE_SECURE = True
+
     CSRF_COOKIE_SECURE = True
+
+    SECURE_SSL_REDIRECT = False
+
+    SECURE_BROWSER_XSS_FILTER = True
+
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+
+# =========================================================
+# VERCEL / PROXY SETTINGS
+# =========================================================
+
+USE_X_FORWARDED_HOST = True

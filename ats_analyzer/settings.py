@@ -1,46 +1,45 @@
-```python
-"""
-Django settings for ats_analyzer project.
-
-Configured for Vercel deployment.
-"""
-
 from pathlib import Path
 import os
-import shutil
+import dj_database_url
 
 
-# ============================================================
+# --------------------------------------------------
 # BASE DIRECTORY
-# ============================================================
+# --------------------------------------------------
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# ============================================================
+# --------------------------------------------------
 # SECURITY
-# ============================================================
+# --------------------------------------------------
 
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
-    "django-insecure-change-this-secret-key"
+    "django-insecure-local-development-key"
 )
 
-DEBUG = False
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+
 
 ALLOWED_HOSTS = [
-    "*",
+    "localhost",
+    "127.0.0.1",
+    ".vercel.app",
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://ats-resume-analyzer-lilac.vercel.app",
-    "https://*.vercel.app",
-]
+# If you have a custom domain, add it here:
+# ALLOWED_HOSTS = [
+#     "localhost",
+#     "127.0.0.1",
+#     ".vercel.app",
+#     "yourdomain.com",
+# ]
 
 
-# ============================================================
+# --------------------------------------------------
 # APPLICATIONS
-# ============================================================
+# --------------------------------------------------
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -50,57 +49,46 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    # Your application
     "analyzer",
 ]
 
 
-# ============================================================
+# --------------------------------------------------
 # MIDDLEWARE
-# ============================================================
+# --------------------------------------------------
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-
     "django.contrib.sessions.middleware.SessionMiddleware",
-
     "django.middleware.common.CommonMiddleware",
-
     "django.middleware.csrf.CsrfViewMiddleware",
-
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-
     "django.contrib.messages.middleware.MessageMiddleware",
-
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 
-# ============================================================
+# --------------------------------------------------
 # URL CONFIGURATION
-# ============================================================
+# --------------------------------------------------
 
-ROOT_URLCONF = "ats_analyzer.urls"
+ROOT_URLCONF = "ats_resume_analyzer.urls"
 
 
-# ============================================================
+# --------------------------------------------------
 # TEMPLATES
-# ============================================================
+# --------------------------------------------------
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-
         "DIRS": [
             BASE_DIR / "templates",
         ],
-
         "APP_DIRS": True,
-
         "OPTIONS": {
             "context_processors": [
-                "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
@@ -110,76 +98,79 @@ TEMPLATES = [
 ]
 
 
-# ============================================================
+# --------------------------------------------------
 # WSGI
-# ============================================================
+# --------------------------------------------------
 
-WSGI_APPLICATION = "ats_analyzer.wsgi.application"
+WSGI_APPLICATION = "ats_resume_analyzer.wsgi.application"
 
 
-# ============================================================
+# --------------------------------------------------
 # DATABASE
-# ============================================================
+# --------------------------------------------------
+#
+# LOCAL:
+#     SQLite
+#
+# VERCEL:
+#     PostgreSQL using DATABASE_URL
+#
+# --------------------------------------------------
 
-# Vercel's deployed filesystem is read-only.
-# /tmp is writable during a serverless execution.
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-SOURCE_DB = BASE_DIR / "db.sqlite3"
-
-VERCEL_DB = Path("/tmp/db.sqlite3")
-
-
-# Copy the existing SQLite database to the writable /tmp directory.
-if SOURCE_DB.exists() and not VERCEL_DB.exists():
-    try:
-        shutil.copy2(SOURCE_DB, VERCEL_DB)
-    except Exception:
-        pass
-
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-
-        "NAME": VERCEL_DB,
-
-        "OPTIONS": {
-            "timeout": 20,
-        },
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
-# ============================================================
+# --------------------------------------------------
 # PASSWORD VALIDATION
-# ============================================================
+# --------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME":
-            "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+        ),
     },
-
     {
-        "NAME":
-            "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "MinimumLengthValidator"
+        ),
     },
-
     {
-        "NAME":
-            "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "CommonPasswordValidator"
+        ),
     },
-
     {
-        "NAME":
-            "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "NumericPasswordValidator"
+        ),
     },
 ]
 
 
-# ============================================================
+# --------------------------------------------------
 # INTERNATIONALIZATION
-# ============================================================
+# --------------------------------------------------
 
 LANGUAGE_CODE = "en-us"
 
@@ -190,9 +181,9 @@ USE_I18N = True
 USE_TZ = True
 
 
-# ============================================================
+# --------------------------------------------------
 # STATIC FILES
-# ============================================================
+# --------------------------------------------------
 
 STATIC_URL = "/static/"
 
@@ -203,65 +194,63 @@ STATICFILES_DIRS = [
 ]
 
 
-# WhiteNoise configuration
-STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedManifestStaticFilesStorage"
-)
-
-
-# ============================================================
+# --------------------------------------------------
 # MEDIA FILES
-# ============================================================
+# --------------------------------------------------
 
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-# ============================================================
-# AUTHENTICATION
-# ============================================================
+# --------------------------------------------------
+# DEFAULT PRIMARY KEY
+# --------------------------------------------------
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# --------------------------------------------------
+# LOGIN / LOGOUT
+# --------------------------------------------------
 
 LOGIN_URL = "/accounts/login/"
 
-LOGIN_REDIRECT_URL = "/dashboard/"
+LOGIN_REDIRECT_URL = "/"
 
-LOGOUT_REDIRECT_URL = "/accounts/login/"
-
-
-# ============================================================
-# SESSION
-# ============================================================
-
-# Store sessions in signed cookies instead of the database.
-# This avoids unnecessary database writes during login.
-
-SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+LOGOUT_REDIRECT_URL = "/"
 
 
-# ============================================================
-# SECURITY FOR VERCEL
-# ============================================================
+# --------------------------------------------------
+# SECURITY SETTINGS FOR VERCEL / PRODUCTION
+# --------------------------------------------------
 
-SECURE_PROXY_SSL_HEADER = (
-    "HTTP_X_FORWARDED_PROTO",
-    "https",
-)
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = (
+        "HTTP_X_FORWARDED_PROTO",
+        "https",
+    )
 
-SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
-SESSION_COOKIE_SECURE = True
-
-CSRF_COOKIE_SECURE = True
-
-SESSION_COOKIE_HTTPONLY = True
-
-CSRF_COOKIE_HTTPONLY = False
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
 
 
-# ============================================================
-# DEFAULT PRIMARY KEY
-# ============================================================
+# --------------------------------------------------
+# CSRF TRUSTED ORIGINS
+# --------------------------------------------------
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-```
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.vercel.app",
+]
+
+
+# --------------------------------------------------
+# FILE UPLOAD SETTINGS
+# --------------------------------------------------
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024

@@ -1,10 +1,9 @@
-#!/usr/bin/env python
-
 import os
 import sys
 
 
 def main():
+    """Run administrative tasks."""
     os.environ.setdefault(
         "DJANGO_SETTINGS_MODULE",
         "ats_analyzer.settings"
@@ -14,8 +13,8 @@ def main():
         from django.core.management import execute_from_command_line
     except ImportError as exc:
         raise ImportError(
-            "Couldn't import Django. "
-            "Make sure Django is installed."
+            "Couldn't import Django. Make sure it is installed "
+            "and available in your Python environment."
         ) from exc
 
     execute_from_command_line(sys.argv)

@@ -1,6 +1,6 @@
 Django==5.2.17
 gunicorn
-whitenoise
+whitenoise==6.12.0
 dj-database-url
 psycopg2-binary
 PyMuPDF

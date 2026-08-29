@@ -49,7 +49,7 @@ MIDDLEWARE = [
 
 
 # URLS
-ROOT_URLCONF = "ats_resume_analyzer.urls"
+ROOT_URLCONF = "ats_analyzer.urls"
 
 
 # TEMPLATES
@@ -70,7 +70,7 @@ TEMPLATES = [
 
 
 # WSGI
-WSGI_APPLICATION = "ats_resume_analyzer.wsgi.application"
+WSGI_APPLICATION = "ats_analyzer.wsgi.application"
 
 
 # DATABASE

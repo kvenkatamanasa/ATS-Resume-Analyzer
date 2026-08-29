@@ -1,3 +1,4 @@
+```python
 from pathlib import Path
 import os
 import dj_database_url
@@ -16,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
-    "django-insecure-change-this-in-production"
+    "django-insecure-change-this-key"
 )
 
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
@@ -32,16 +33,6 @@ ALLOWED_HOSTS = [
     ".vercel.app",
 ]
 
-# Optional custom hosts from environment variable
-extra_hosts = os.environ.get("ALLOWED_HOSTS", "")
-
-if extra_hosts:
-    ALLOWED_HOSTS.extend(
-        host.strip()
-        for host in extra_hosts.split(",")
-        if host.strip()
-    )
-
 
 # =========================================================
 # APPLICATIONS
@@ -55,7 +46,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Your application
     "analyzer",
 ]
 
@@ -70,10 +60,15 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
+
     "django.middleware.common.CommonMiddleware",
+
     "django.middleware.csrf.CsrfViewMiddleware",
+
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
     "django.contrib.messages.middleware.MessageMiddleware",
+
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -133,9 +128,7 @@ if DATABASE_URL:
             ssl_require=True,
         )
     }
-
 else:
-    # Local development only
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -177,7 +170,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # =========================================================
-# INTERNATIONALIZATION
+# LANGUAGE AND TIME ZONE
 # =========================================================
 
 LANGUAGE_CODE = "en-us"
@@ -200,6 +193,11 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+
+# =========================================================
+# WHITENOISE
+# =========================================================
 
 STORAGES = {
     "default": {
@@ -250,18 +248,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.vercel.app",
 ]
 
-csrf_origins = os.environ.get("CSRF_TRUSTED_ORIGINS", "")
-
-if csrf_origins:
-    CSRF_TRUSTED_ORIGINS.extend(
-        origin.strip()
-        for origin in csrf_origins.split(",")
-        if origin.strip()
-    )
-
 
 # =========================================================
-# SECURITY SETTINGS FOR VERCEL
+# PRODUCTION SECURITY
 # =========================================================
 
 if not DEBUG:
@@ -279,18 +268,10 @@ if not DEBUG:
 
 
 # =========================================================
-# FILE UPLOAD LIMITS
+# FILE UPLOAD LIMIT
 # =========================================================
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
-
-
-# =========================================================
-# SESSION
-# =========================================================
-
-SESSION_COOKIE_HTTPONLY = True
-
-CSRF_COOKIE_HTTPONLY = False
+```

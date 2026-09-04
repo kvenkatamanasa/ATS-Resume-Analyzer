@@ -56,7 +56,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 
-    # WhiteNoise for serving static files
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -249,8 +248,6 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
 
     SECURE_SSL_REDIRECT = False
-
-    SECURE_BROWSER_XSS_FILTER = True
 
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
